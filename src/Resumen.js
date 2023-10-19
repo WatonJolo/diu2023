@@ -1,11 +1,53 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { useGlobalState } from './GlobalStateContext'; // Asegúrate de que la ruta sea correcta
 import { Link } from 'react-router-dom';
 
+const containerStyle = {
+  display:'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '80vh',
+  width: '100%',
+  position: 'absolute'
+};
+
+const contentStyle = {
+  width:'60%',
+  textAlign: 'center',
+  padding: '20px',
+  border: '1px solid #ccc',
+  borderRadius: '8px',
+  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+  backgroundColor: '#f9f9f9',
+};
+
+const buttonStyle = {
+  padding: '10px 20px',
+  margin: '10px',
+  background: 'rgba(105, 100, 192, 0.6)',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+};
+
+const formContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+};
+
+const selectStyle = {
+  fontSize: '15px',
+  margin: '10px 15px',
+};
+
+const chartContainerStyle = {
+  width: '50%',
+  margin: '0 auto',
+};
 
 const HappinessSurvey = () => {
-  const { globalState, setGlobalState } = useGlobalState();
 
   const initialSurveyData = {
     gestion: 1,
@@ -36,20 +78,6 @@ const HappinessSurvey = () => {
     return (sum / values.length).toFixed(2);
   };
 
-  const calculateCategoryPointsAverage = (category) => {
-    const totalResponses = savedResponses.length;
-    const categorySum = savedResponses.reduce((acc, response) => response[category], 0);
-    return (categorySum / totalResponses).toFixed(2);
-  };
-
-  const calculateOverallPointsAverage = () => {
-    const totalResponses = savedResponses.length;
-    const pointsSum = savedResponses.reduce((acc, response) => {
-      const values = Object.values(response);
-      return acc + values.reduce((valAcc, value) => valAcc + value, 0);
-    }, 0);
-    return (pointsSum / (totalResponses * 6)).toFixed(2);
-  };
 
   const saveResponses = () => {
     const responses = { ...surveyData };
@@ -63,18 +91,11 @@ const HappinessSurvey = () => {
     setSavedAverage(average);
 
     // Actualiza el estado global con el promedio de todas las respuestas
-    setGlobalState({ ...globalState, promedioTotal: average });
   };
 
   const generatePointsChart = () => {
     setShowPointsChart(true);
     const categoryAverages = calculateCategoryAverages();
-
-    // Actualiza el estado global con el promedio de respuesta de cada categoría
-    setGlobalState({ ...globalState, categoryAverages });
-
-    // Opcional: También puedes actualizar el promedio total si lo necesitas
-    setGlobalState({ ...globalState, promedioTotal: calculateTotalAverage() });
   };
 
   const calculateTotalAverage = () => {
@@ -109,17 +130,47 @@ const HappinessSurvey = () => {
 
     return categoryAverages;
   };
+
   const categoryAverages = calculateCategoryAverages();
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div>
+    <div className="container">
+    <header className="navbar">
+      <a className="navbar-brand" href='/'>Chocobito</a>
+      <label htmlFor="menu-toggle" className="navbar-toggler">
+        <span className="navbar-toggler-icon"></span>
+      </label>
+      <nav className="navbar-collapse">
+        <ul className="navbar-nav">
+          <li className="nav-item dropdown">
+            <label htmlFor="evaluacionDropdown" className="nav-link dropdown-label">
+              EVALUACION
+            </label>
+            <ul className="dropdown-menu">
+              <li className="dropdown-item">
+                <Link to="/Satisfaccion">Satisfacción</Link>
+              </li>
+              <li className="dropdown-item">
+                <Link to="/Resumen">Resumen</Link>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+   
+    <div style={containerStyle}>
+      <div style={contentStyle}>
         <h2>Índice de Felicidad del Equipo Ágil</h2>
-        <form>
+        <form style={formContainerStyle}>
           <div>
-            <label>
-              Gestion: Entendemos nuestra estrategia y responsabilidades.
-              <select onChange={(e) => handleChange(e, 'gestion')} value={surveyData.gestion}>
+            <label className='font'>
+            <b>Gestion:</b> Entendemos nuestra estrategia y responsabilidades.
+              <select
+                onChange={(e) => handleChange(e, 'gestion')}
+                value={surveyData.gestion}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -129,9 +180,13 @@ const HappinessSurvey = () => {
             </label>
           </div>
           <div>
-            <label>
-              Software: Nuestro software es mantenible, seguro y confiable.
-              <select onChange={(e) => handleChange(e, 'software')} value={surveyData.software}>
+            <label className='font'>
+            <b>Software:</b> Nuestro software es mantenible, seguro y confiable.
+              <select
+                onChange={(e) => handleChange(e, 'software')}
+                value={surveyData.software}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -141,9 +196,13 @@ const HappinessSurvey = () => {
             </label>
           </div>
           <div>
-            <label>
-              Cultura: Trabajamos eficazmente entre nosotros.
-              <select onChange={(e) => handleChange(e, 'cultura')} value={surveyData.cultura}>
+            <label className='font'>
+            <b>Cultura:</b> Trabajamos eficazmente entre nosotros.
+              <select
+                onChange={(e) => handleChange(e, 'cultura')}
+                value={surveyData.cultura}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -153,9 +212,13 @@ const HappinessSurvey = () => {
             </label>
           </div>
           <div>
-            <label>
-              Valor: Usamos comentarios para mejorar.
-              <select onChange={(e) => handleChange(e, 'valor')} value={surveyData.valor}>
+            <label className='font'>
+            <b>Valor:</b> Usamos comentarios para mejorar.
+              <select
+                onChange={(e) => handleChange(e, 'valor')}
+                value={surveyData.valor}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -165,21 +228,30 @@ const HappinessSurvey = () => {
             </label>
           </div>
           <div>
-            <label>
-              Entregas: Entregamos a tiempo, damos mantención y soporte.
-              <select onChange={(e) => handleChange(e, 'entregas')} value={surveyData.entregas}>
+            <label className='font'>
+            <b>
+              Entregas:</b> Entregamos a tiempo, damos mantención y soporte.
+              <select
+                onChange={(e) => handleChange(e, 'entregas')}
+                value={surveyData.entregas}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
                 ))}
               </select>
-            </label>
+              </label>
           </div>
           <div>
-            <label>
-              Autodeterminación: Solucionamos los problemas propios y de los clientes.
-              <select onChange={(e) => handleChange(e, 'autodeterminacion')} value={surveyData.autodeterminacion}>
+            <label className='font'>
+            <b>Autodeterminación:</b> Solucionamos los problemas propios y de los clientes.
+              <select
+                onChange={(e) => handleChange(e, 'autodeterminacion')}
+                value={surveyData.autodeterminacion}
+                style={selectStyle}
+              >
                 {[1, 2, 3, 4, 5].map((value) => (
                   <option key={value} value={value}>
                     {value}
@@ -190,43 +262,35 @@ const HappinessSurvey = () => {
           </div>
         </form>
         <div>
-          <button onClick={saveResponses}>Guardar Respuestas</button>
-          <button onClick={generateChart}>Generar Gráfico de Promedio</button>
-          <button onClick={generatePointsChart}>Generar Gráfico de Puntos</button>
+          <button style={buttonStyle} onClick={saveResponses}>
+            Guardar Respuestas
+          </button>
+          <button style={buttonStyle} onClick={generateChart}>
+            Generar Gráfico de Promedio
+          </button>
+          <button style={buttonStyle} onClick={generatePointsChart}>
+            Generar Gráfico de Puntos
+          </button>
           <Link to="/">
-          <button>Ir a la página de inicio</button>
-        </Link>
+            <button style={buttonStyle}>Ir a la página de inicio</button>
+          </Link>
         </div>
         {savedResponses.length > 0 && (
           <div>
-            <h3>Respuestas guardadas:</h3>
-            <ul>
-              {savedResponses.map((response, index) => (
-                <li key={index}>Respuesta {index + 1}: {JSON.stringify(response)}</li>
-              ))}
-            </ul>
+            {/* { <><h3>Respuestas guardadas:</h3><ul>
+                {savedResponses.map((response, index) => (
+                  <div key={index}>Respuesta {index + 1}: guardada</div>
+                ))}
+              </ul></> } */}
           </div>
         )}
-        <p>Promedio de Felicidad: {savedAverage || calculateAverage(surveyData)}</p>
-        {showChart && (
-        <div style={{ width: '80%', margin: '0 auto' }}>
-          <BarChart width={600} height={400} data={Object.entries(categoryAverages).map(([name, promedio]) => ({
-            name,
-            promedio: parseFloat(promedio),
-          }))}>
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 5]} />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="promedio" fill="rgba(75, 192, 192, 0.6)" />
-          </BarChart>
-        </div>
-)}
-
-        {showPointsChart && (
-          <div style={{ width: '80%', margin: '0 auto' }}>
-            <BarChart width={600} height={400} data={totalAverageData}>
+      {showChart && (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={chartContainerStyle}>
+            <BarChart width={600} height={400} data={Object.entries(categoryAverages).map(([name, promedio]) => ({
+              name,
+              promedio: parseFloat(promedio),
+            }))}>
               <XAxis dataKey="name" />
               <YAxis domain={[0, 5]} />
               <CartesianGrid strokeDasharray="3 3" />
@@ -235,11 +299,24 @@ const HappinessSurvey = () => {
               <Bar dataKey="promedio" fill="rgba(75, 192, 192, 0.6)" />
             </BarChart>
           </div>
-        )}
-      </div>
+          {showPointsChart && (
+            <div style={chartContainerStyle}>
+              <BarChart width={600} height={400} data={totalAverageData}>
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 5]} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="promedio" fill="rgba(75, 192, 192, 0.6}" />
+              </BarChart>
+            </div>
+          )}
+        </div>
+      )}
     </div>
+  </div> 
+  </div>
   );
 };
 
 export default HappinessSurvey;
-

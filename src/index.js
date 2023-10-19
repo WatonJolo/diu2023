@@ -2,13 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { GlobalStateProvider } from './GlobalStateContext'; // Asegúrate de importar el contexto aquí
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <GlobalStateProvider>
-    <App />
-  </GlobalStateProvider>,
+    <App />,
   document.getElementById('root')
 );
 
