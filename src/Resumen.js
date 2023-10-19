@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Link } from 'react-router-dom';
+import swal from 'sweetalert';
+
+const mostrarAlerta = () => {
+  swal({
+    title: "¡Gracias por tu respuesta!",
+    text: "Tu respuesta ha sido registrada",
+    icon: "success",
+    button: "Aceptar",
+  });  
+};
 
 const containerStyle = {
   display:'flex',
@@ -83,6 +93,11 @@ const HappinessSurvey = () => {
     const responses = { ...surveyData };
     setSavedResponses([...savedResponses, responses]);
     setSurveyData(initialSurveyData);
+  };
+
+  const handleButtonClick = () => {
+    saveResponses();
+    mostrarAlerta();
   };
 
   const generateChart = () => {
@@ -262,7 +277,7 @@ const HappinessSurvey = () => {
           </div>
         </form>
         <div>
-          <button style={buttonStyle} onClick={saveResponses}>
+          <button style={buttonStyle} onClick={handleButtonClick}>
             Guardar Respuestas
           </button>
           <button style={buttonStyle} onClick={generateChart}>

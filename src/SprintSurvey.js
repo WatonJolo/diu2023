@@ -2,6 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import './App.css';
+import swal from 'sweetalert';
+
+const mostrarAlerta = () => {
+  swal({
+    title: "¡Gracias por tu respuesta!",
+    text: "Tu respuesta ha sido registrada",
+    icon: "success",
+    button: "Aceptar",
+  });  
+};
 
 const containerStyle = {
   display: 'flex',
@@ -100,6 +110,11 @@ const SprintSurvey = () => {
     setCurrentResponse([1, 1, 1, 1, 1]);
   };
 
+  const handleButtonClick = () => {
+    saveResponses();
+    mostrarAlerta();
+  };
+
   const chartDataSprintSurvey = surveyData.map((response) => {
     const averageValue = calculateAverage(response.values);
     return {
@@ -174,7 +189,7 @@ const SprintSurvey = () => {
             </div>
           ))}
         </ol>
-        <button style={buttonStyle} onClick={saveResponses}>
+        <button style={buttonStyle} onClick={handleButtonClick}>
           Guardar Respuestas
         </button>
         <Link to="/">
